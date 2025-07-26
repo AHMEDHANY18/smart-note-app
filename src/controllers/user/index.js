@@ -4,4 +4,5 @@ module.exports = {
   loginController: require("./login"),
   forgetPassword: require("./forgetPassword"),
   resetPassword: require("./resetPassword"),
+  logoutController: require("./logout"),
 };
