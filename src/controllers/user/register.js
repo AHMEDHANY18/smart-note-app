@@ -55,7 +55,7 @@ const register = asyncHandler(async (req, res, next) => {
         {
             otpId: otpDoc._id.toString(),
             otpCode,
-            user
+            user: user._id,
         },
         "10m"
     );

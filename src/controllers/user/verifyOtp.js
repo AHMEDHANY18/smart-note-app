@@ -5,7 +5,6 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
     const { otpCode } = req.body;
 
     const token = req.user;
-    console.log("🚀 ~ authorization:", token);
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: No user context" });
     }
@@ -17,6 +16,7 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
             { phone: token.phone }
         ]
     });
+    console.log("🚀 ~ otpDoc:", otpDoc)
 
     if (!otpDoc) {
         return res.status(400).json({ message: "OTP not found or expired" });
