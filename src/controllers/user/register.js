@@ -16,7 +16,7 @@ const register = asyncHandler(async (req, res, next) => {
     // ✅ إنشاء المستخدم
     const user = await User.create({
         fullname,
-        email: email.toLowerCase(),
+        email: email,
         phone,
         password: hashedPassword,
         recoveryEmail,
@@ -33,22 +33,22 @@ const register = asyncHandler(async (req, res, next) => {
     });
 
     // ✅ إرسال البريد
-    await sendMail(
-        email,
-        "OTP Verification",
-        `
-    <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
-      <div style="max-width: 600px; margin: 0 auto; background-color: #fff; border-radius: 5px; overflow: hidden; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
-        <div style="background-color: #2196F3; color: #fff; padding: 10px; text-align: center;">
-          <h2 style="margin: 0;">OTP Verification</h2>
-        </div>
-        <div style="padding: 20px;">
-          <p style="font-size: 16px;">Your OTP is: <strong>${otpCode}</strong></p>
-        </div>
-      </div>
-    </div>
-    `
-    );
+    // await sendMail(
+    //     email,
+    //     "OTP Verification",
+    //     `
+    // <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+    //   <div style="max-width: 600px; margin: 0 auto; background-color: #fff; border-radius: 5px; overflow: hidden; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
+    //     <div style="background-color: #2196F3; color: #fff; padding: 10px; text-align: center;">
+    //       <h2 style="margin: 0;">OTP Verification</h2>
+    //     </div>
+    //     <div style="padding: 20px;">
+    //       <p style="font-size: 16px;">Your OTP is: <strong>${otpCode}</strong></p>
+    //     </div>
+    //   </div>
+    // </div>
+    // `
+    // );
 
     // ✅ إنشاء توكن
     const otpToken = jwtSign(
