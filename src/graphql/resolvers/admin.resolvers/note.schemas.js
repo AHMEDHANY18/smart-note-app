@@ -1,12 +1,8 @@
 const { gql } = require("apollo-server-express");
 
-const appsSchema = require("./apps.resolvers/schems.js");
+const noteSchema = require("./note.resolvers/schems.js");
 
 module.exports = gql`
-
-  ${appsSchema}
-
-
-
+  ${noteSchema}
 `;
 

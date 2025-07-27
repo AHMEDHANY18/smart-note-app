@@ -1,5 +1,5 @@
 const { gql } = require("apollo-server-express");
-const appSchemas = require("./resolvers/admin.resolvers/app.schemas.js");
+const noteSchemas = require("./resolvers/admin.resolvers/note.schemas.js");
 
 module.exports = gql`
   scalar JSON
@@ -48,5 +48,5 @@ module.exports = gql`
     updatedAt: String
   }
 
-  ${appSchemas}
+  ${noteSchemas}
 `;

@@ -1,8 +1,5 @@
 const lodash = require("lodash");
 
-const appsResolvers = require("./apps.resolvers/index.js");
+const noteResolvers = require("./note.resolvers/index.js");
 
-module.exports = lodash.merge(
-  appsResolvers,
-
-);
+module.exports = lodash.merge(noteResolvers);
