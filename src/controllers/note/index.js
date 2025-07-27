@@ -3,4 +3,5 @@ module.exports = {
   deleteNoteController: require("./delete"),
   getMyNoteController: require("./getMyNotes"),
   updateNoteController: require("./update"),
+  summarizeNote: require("./summarizeNote"),
 };
