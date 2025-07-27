@@ -17,7 +17,11 @@ const noteSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: false, // خليه optional لو مش دايمًا المستخدم هيختار تصنيف
+      required: false,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
     },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
