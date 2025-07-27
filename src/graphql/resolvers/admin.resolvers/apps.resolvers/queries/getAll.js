@@ -1,6 +1,23 @@
 const { ApolloError } = require("apollo-server-express");
 const { pagination } = require("../../../../../config/constants");
 const { Note, User } = require("../../../../../models");
+/**
+ * Fetches a paginated list of notes based on the authenticated user or a search keyword.
+ *
+ * - If a user is logged in, filters notes by their `ownerId`.
+ * - If a `search` keyword is provided, it searches for users with matching names (`fullname`)
+ *   and filters notes owned by them.
+ *
+ * @param {object} _ - Unused GraphQL root argument
+ * @param {object} args - Query arguments
+ * @param {number} [args.page=1] - Page number for pagination
+ * @param {number} [args.limit=10] - Number of notes per page
+ * @param {string} [args.search=""] - Search keyword to match user full names
+ * @param {object} context - GraphQL context containing authenticated user
+ * @param {object} context.user - Authenticated user object
+ * @returns {Promise<{ data: object[], pagination: { total: number, page: number, pages: number } }>} Paginated notes result
+ * @throws {ApolloError} When an unexpected error occurs during the query
+ */
 
 module.exports = async (
   _,
