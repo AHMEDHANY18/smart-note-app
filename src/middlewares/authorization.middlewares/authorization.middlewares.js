@@ -14,7 +14,6 @@ const userAuthorization = async (req, res, next) => {
         }
 
         const data = await helpers.encryption.jwtVerfy(token);
-        console.log("🚀 ~ userAuthorization ~ data:", data);
 
         if (!data) {
             return res.status(401).json({ message: "Invalid or expired token" });
