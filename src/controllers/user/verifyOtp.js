@@ -16,7 +16,6 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
             { phone: token.phone }
         ]
     });
-    console.log("🚀 ~ otpDoc:", otpDoc)
 
     if (!otpDoc) {
         return res.status(400).json({ message: "OTP not found or expired" });

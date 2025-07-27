@@ -8,8 +8,6 @@ const countByDays = async ({ daysCount, model, query = {}, app }) => {
     } else {
         dateBeforeXDays = moment().subtract(daysCount, 'days').startOf('day'); // تقديم التاريخ بناءً على عدد الأيام المحدد
     }
-    console.log(dateBeforeXDays.format('YYYY-MM-DD HH:mm:ss'),"بعد او يساوي aa")
-
     const q = {
         createdAt: { $gte: dateBeforeXDays.toDate() },
         app: app._id,

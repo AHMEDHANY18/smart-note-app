@@ -55,5 +55,5 @@ function onListening() {
   debug("Listening on " + bind);
 
   const ip = addr?.address ?? "localhost";
-  console.log(`🚀 Server running on http://${ip}:${port}`);
+  console.log(`🚀 Server running on http://localhost:${port}`);
 }
