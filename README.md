@@ -1,6 +1,6 @@
 # Smart Note App
 
-A simple Note Management System with user authentication, note CRUD operations, AI-powered summarization, and GraphQL support.
+A simple Note Management System with user authentication, note CRUD operations, AI-powered summarization via Groq (free tier), and GraphQL support.
 
 ## Features
 
@@ -8,7 +8,7 @@ A simple Note Management System with user authentication, note CRUD operations, 
 * OTP-based email verification and password reset
 * Upload profile picture
 * Create, read, update, delete (CRUD) notes
-* AI-powered note summarization via Groq (Mixtral, Llama3)
+* AI-powered note summarization via Groq (Mixtral, Llama3) — **chosen due to OpenAI API requiring paid subscription**
 * RESTful and GraphQL APIs
 * Rate limiting, CORS, Helmet security
 
@@ -28,8 +28,10 @@ JWT_SECRET=your_jwt_secret
 EMAIL_SERVICE=YourEmailServiceProvider
 EMAIL_USER=your_email@example.com
 EMAIL_PASS=your_email_password
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_GROQ_API_KEY
 ```
+
+> **Note:** OpenAI's API requires a paid plan, so this project uses Groq's free tier with the above key.
 
 ## Installation
 
@@ -39,6 +41,7 @@ GROQ_API_KEY=your_groq_api_key_here
    git clone https://github.com/AHMEDHANY18/smart-note-app.git
    cd smart-note-app
    ```
+
 2. Install dependencies:
 
    ```bash
@@ -73,6 +76,12 @@ All REST endpoints are prefixed with `/api/v1`.
 
 ### Notes
 
+> **Header** for protected routes:
+>
+> ```
+> Authorization: <JWT token>
+> ```
+
 | Method | Endpoint                      | Description           | Body / Params                                      |
 | ------ | ----------------------------- | --------------------- | -------------------------------------------------- |
 | POST   | `/api/v1/notes`               | Create a new note     | `{ title, content, category? }`                    |
@@ -82,11 +91,7 @@ All REST endpoints are prefixed with `/api/v1`.
 | DELETE | `/api/v1/notes/:id`           | Delete note by ID     | Path `:id`                                         |
 | POST   | `/api/v1/notes/:id/summarize` | Summarize note via AI | Path `:id`, Header `authorization`                 |
 
-> **Header** for protected routes:
->
-> ```
-> Authorization: <JWT token>
-> ```
+> **Note:** IDs are exposed publicly to facilitate easy testing via Postman or GraphQL queries.
 
 ---
 
@@ -119,6 +124,14 @@ query GetNotes($page: Int, $limit: Int, $search: String) {
   }
 }
 ```
+
+---
+
+## Postman Collection
+
+You can import the full Postman collection from:
+
+[Smart Note App API Documentation](https://documenter.getpostman.com/view/33115360/2sB3B7MtHk)
 
 ---
 
