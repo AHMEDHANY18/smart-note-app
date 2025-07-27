@@ -28,7 +28,7 @@ JWT_SECRET=your_jwt_secret
 EMAIL_SERVICE=YourEmailServiceProvider
 EMAIL_USER=your_email@example.com
 EMAIL_PASS=your_email_password
-GROQ_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 ## Installation
