@@ -1,6 +1,6 @@
 const { ApolloServer, ApolloError } = require("apollo-server-express");
 const { resolvers, typeDefs, permissionsComplex } = require("./src/graphql");
-const { makeExecutableSchema } = require("graphql-tools");
+const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { applyMiddleware } = require("graphql-middleware");
 const FormatError = require("easygraphql-format-error");
 const { ApolloServerPluginDrainHttpServer, ApolloServerPluginInlineTrace } = require("apollo-server-core");
@@ -67,7 +67,7 @@ module.exports = async (app, httpServer) => {
         },
       },
     ],
-    
+
     context: async ({ req, res }) => {
       const languageCode = req.headers["content-language"];
       var language = await Language.findOne({code: languageCode?.toString().toLocaleLowerCase()});

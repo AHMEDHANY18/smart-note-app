@@ -5,4 +5,5 @@ module.exports = {
   forgetPassword: require("./forgetPassword"),
   resetPassword: require("./resetPassword"),
   logoutController: require("./logout"),
+  uploadProfilePicController: require("./uploadProfilePic"),
 };

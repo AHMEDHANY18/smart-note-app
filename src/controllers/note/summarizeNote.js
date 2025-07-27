@@ -14,7 +14,7 @@ const summarizeNoteController = asyncHandler(async (req, res) => {
   }
 
   const response = await openai.chat.completions.create({
-    model: "llama3-70b-8192", // بدل "mixtral-8x7b-32768"
+    model: "llama3-70b-8192",
     messages: [
       {
         role: "system",
