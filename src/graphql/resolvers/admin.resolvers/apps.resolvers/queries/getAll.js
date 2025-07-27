@@ -10,22 +10,16 @@ module.exports = async (
   try {
     const skip = (page - 1) * limit;
     const query = {};
-
-    // ✅ لو فيه مستخدم مسجل دخول
     if (user?._id) {
       query.ownerId = user._id;
     }
-
-    // ✅ لو فيه بحث بالاسم
     if (search) {
       const users = await User.find({
         fullname: { $regex: search, $options: "i" },
       })
         .select("_id")
         .lean();
-
       const ownerIds = users.map((u) => u._id);
-
       if (query.ownerId) {
         query.ownerId = {
           $in: ownerIds.filter((id) => id.equals(query.ownerId)),
@@ -34,20 +28,13 @@ module.exports = async (
         query.ownerId = { $in: ownerIds };
       }
     }
-
-    console.log("🔍 Query used:", query);
-
     const total = await Note.countDocuments(query);
-
     const notes = await Note.find(query)
       .populate("category ownerId")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
       .lean();
-
-    console.log("🚀 ~ notes:", notes);
-
     return {
       data: notes,
       pagination: {
