@@ -9,21 +9,34 @@ module.exports = async (
 ) => {
   try {
     const skip = (page - 1) * limit;
+    const query = {};
 
-    // نبدأ بالبحث في اسم صاحب النوت (owner)
-    const users = await User.find({
-      name: { $regex: search, $options: "i" }, // بحث غير حساس لحالة الحروف
-    })
-      .select("_id")
-      .lean();
+    // ✅ لو فيه مستخدم مسجل دخول
+    if (user?._id) {
+      query.ownerId = user._id;
+    }
 
-    const ownerIds = users.map((u) => u._id);
+    // ✅ لو فيه بحث بالاسم
+    if (search) {
+      const users = await User.find({
+        fullname: { $regex: search, $options: "i" },
+      })
+        .select("_id")
+        .lean();
 
-    const query = {
-      ownerId: { $in: ownerIds },
-    };
+      const ownerIds = users.map((u) => u._id);
 
-    // نجيب عدد النتائج
+      if (query.ownerId) {
+        query.ownerId = {
+          $in: ownerIds.filter((id) => id.equals(query.ownerId)),
+        };
+      } else {
+        query.ownerId = { $in: ownerIds };
+      }
+    }
+
+    console.log("🔍 Query used:", query);
+
     const total = await Note.countDocuments(query);
 
     const notes = await Note.find(query)
@@ -32,7 +45,8 @@ module.exports = async (
       .limit(limit)
       .sort({ createdAt: -1 })
       .lean();
-    console.log("🚀 ~ notes:", notes)
+
+    console.log("🚀 ~ notes:", notes);
 
     return {
       data: notes,
@@ -43,7 +57,7 @@ module.exports = async (
       },
     };
   } catch (error) {
-    console.error("❌ خطأ أثناء جلب النوت:", error);
-    return new ApolloError("حدث خطأ أثناء جلب الملاحظات");
+    console.error("❌ خطأ أثناء جلب النوت:", error.message, error.stack);
+    throw new ApolloError(error.message || "حدث خطأ أثناء جلب الملاحظات");
   }
 };

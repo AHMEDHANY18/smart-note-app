@@ -30,8 +30,10 @@ module.exports = gql`
   }
   type Category {
     _id: ID!
-    name: String!
-    description: String
+    title: String!
+    color: String
+    icon: String
+    isDefault: Boolean
     createdAt: String
     updatedAt: String
   }
