@@ -7,14 +7,12 @@ require("./config/database");
 // 🧩 Load global middlewares
 require("./middlewares/index.moiddleware")(app, express);
 
+// ❌ شيل 404 handler من هنا تمامًا
 
-// ❌ 404 handler
-app.use("*", (req, res) => {
-    res.status(404).json({ message: "This route does not exist" });
-});
-
-// 🔥 Global error handler
-const { GlobalErrorHandler } = require("./middlewares/authorization.middlewares/asyncHandler");
+// 🔥 Global error handler (خليه)
+const {
+  GlobalErrorHandler,
+} = require("./middlewares/authorization.middlewares/asyncHandler");
 app.use(GlobalErrorHandler);
 
 module.exports = app;

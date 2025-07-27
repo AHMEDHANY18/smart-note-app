@@ -1,1 +1,0 @@
-module.exports = { prefix: "client_User", description: "" };

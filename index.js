@@ -11,23 +11,32 @@ app.set("port", port);
 
 const server = http.createServer(app);
 
-// ✅ Listen
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
+// ✅ شغّل Apollo Server أولاً، وبعدين شغّل HTTP server
+(async () => {
+  try {
+    await startApolloServer(app, server);
 
-// ✅ Normalize port
+    // ✅ حط 404 handler هنا بعد ما تسجل Apollo Middleware
+    app.use("*", (req, res) => {
+      res.status(404).json({ message: "This route does not exist" });
+    });
+
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+  } catch (err) {
+    console.error("❌ Apollo Server startup failed:", err);
+  }
+})();
+
 function normalizePort(val) {
   const parsedPort = parseInt(val, 10);
   return isNaN(parsedPort) ? val : parsedPort >= 0 ? parsedPort : false;
 }
 
-// ✅ Error handler
 function onError(error) {
   if (error.syscall !== "listen") throw error;
-
   const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
-
   switch (error.code) {
     case "EACCES":
       console.error(`${bind} requires elevated privileges`);
@@ -40,7 +49,6 @@ function onError(error) {
   }
 }
 
-// ✅ Listening event
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
@@ -48,9 +56,4 @@ function onListening() {
 
   const ip = addr?.address ?? "localhost";
   console.log(`🚀 Server running on http://${ip}:${port}`);
-
-  // ✅ Start Apollo server (GraphQL)
-  startApolloServer(app, server).catch((err) => {
-    console.error("❌ Apollo Server startup failed:", err);
-  });
 }

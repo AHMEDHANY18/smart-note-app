@@ -1,42 +1,26 @@
 const { gql } = require("apollo-server-express");
-const appSchemas = require("./resolvers/app.resolvers/app.schemas.js");
+const appSchemas = require("./resolvers/admin.resolvers/app.schemas.js");
 
 module.exports = gql`
   scalar JSON
   scalar DateTime
   scalar Any
 
-  type Translations {
-    text: JSON
-    language: Language
-  }
   input Pagination {
-    limit:Int
+    limit: Int
     page: Int
-}
-
-  type Language {
-    _id: ID
-    title: String
-    code: String
-    rtl: Int
-    status: String
   }
 
   type User {
     _id: ID
     fullname: String
     phone: String
-    role:String
+    role: String
     avatar: String
-    status: String
     blocked: Boolean
     verfied: Boolean
-    activated: Boolean
     deleted: Boolean
   }
-
-
 
   type Response {
     success: Boolean
@@ -44,44 +28,23 @@ module.exports = gql`
     data: JSON
     token: String
   }
-
-
-  type App {
-    _id: ID
-    name: String
+  type Category {
+    _id: ID!
+    name: String!
     description: String
-    logo: String
-    user: User
-    branch:Branch
-  }
-  type Branch {
-    _id: ID
-    title: String
-    description: String
-    icon: String
-    parent:Branch
-    isMain:Boolean
+    createdAt: String
+    updatedAt: String
   }
 
-  type Setting {
-    _id: ID
-    key: String
-    value: SettingValue
-    private: Boolean
-    deleted: Boolean
-    createdAt: DateTime
-    updatedAt: DateTime
-}
-
-    type SettingValue {
-        dataType: String
-        data: Any
-    }
-
-    input SettingValueInput {
-        dataType: String
-        data: Any
-    }
+  type Note {
+    _id: ID!
+    title: String!
+    content: String!
+    category: Category
+    ownerId: User
+    createdAt: String
+    updatedAt: String
+  }
 
   ${appSchemas}
 `;

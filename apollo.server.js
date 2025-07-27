@@ -1,14 +1,16 @@
-const { ApolloServer, ApolloError } = require("apollo-server-express");
-const { resolvers, typeDefs, permissionsComplex } = require("./src/graphql");
+const { ApolloServer } = require("apollo-server-express");
+const {
+  ApolloServerPluginDrainHttpServer,
+  ApolloServerPluginInlineTrace,
+} = require("apollo-server-core");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
-const { applyMiddleware } = require("graphql-middleware");
-const FormatError = require("easygraphql-format-error");
-const { ApolloServerPluginDrainHttpServer, ApolloServerPluginInlineTrace } = require("apollo-server-core");
 const { PubSub } = require("graphql-subscriptions");
-
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/lib/use/ws");
-const { User, Language } = require("./src/models");
+const FormatError = require("easygraphql-format-error");
+
+const { resolvers, typeDefs } = require("./src/graphql");
+const { User } = require("./src/models");
 const { jwtVerfy } = require("./src/utilities/helpers/encryption");
 
 const pubsub = new PubSub();
@@ -22,38 +24,53 @@ module.exports = async (app, httpServer) => {
     },
   ]);
 
-  const schema = false
-    ? applyMiddleware(
-        makeExecutableSchema({ typeDefs, resolvers }),
-        permissionsComplex
-      )
-    : applyMiddleware(makeExecutableSchema({ typeDefs, resolvers }));
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-  // إنشاء خادم WebSocket
   const wsServer = new WebSocketServer({
     server: httpServer,
     path: "/graphql",
   });
+
   const serverCleanup = useServer(
     {
       schema,
       context: async ({ connectionParams }) => {
         const token = connectionParams["Authorization"];
         const tokenData = await jwtVerfy(token);
-        var userData;
+        let userData;
         if (tokenData) {
           userData = await User.findById(tokenData._id);
         }
         return {
-          pubsub: pubsub,
+          pubsub,
           user: userData,
         };
       },
     },
     wsServer
   );
+
   const server = new ApolloServer({
     schema,
+    context: async ({ req }) => {
+      const token = req.headers["authorization"];
+      let userData;
+      if (token) {
+        const tokenData = await jwtVerfy(token);
+        if (tokenData) {
+          userData = await User.findById(tokenData._id);
+        }
+      }
+      return {
+        user: userData,
+        token,
+        pubsub,
+      };
+    },
+    formatError: (err) => {
+      console.error(err.extensions);
+      return formatError.getError(err);
+    },
     plugins: [
       ApolloServerPluginInlineTrace(),
       ApolloServerPluginDrainHttpServer({ httpServer }),
@@ -67,37 +84,14 @@ module.exports = async (app, httpServer) => {
         },
       },
     ],
-
-    context: async ({ req, res }) => {
-      const languageCode = req.headers["content-language"];
-      var language = await Language.findOne({code: languageCode?.toString().toLocaleLowerCase()});
-      if(!language){
-        language =  await Language.findOne({code: 'ar'});
-      }
-      const token = req.headers["authorization"];
-      var userData;
-      if (token) {
-        const tokenData = await jwtVerfy(token);
-        if (tokenData) {
-          userData = await User.findById(tokenData._id);
-        }
-      }
-      return {
-        user: userData,
-        token,
-        pubsub: pubsub,
-        language,
-      };
-    },
-    formatError: (err) => {
-      console.error(err.extensions);
-      return formatError.getError(err);
-    },
   });
 
   await server.start();
-  server.applyMiddleware({ app });
+
+  // ✅ لازم تحدد المسار هنا بشكل واضح
+  server.applyMiddleware({ app, path: "/graphql" });
+
   console.log(
-    `Server running at http://localhost:${process.env.PORT}${server.graphqlPath}`
+    `🚀 Server running at http://localhost:${process.env.PORT}${server.graphqlPath}`
   );
 };
