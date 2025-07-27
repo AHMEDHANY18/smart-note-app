@@ -3,8 +3,11 @@ const { registerController, verifyOtp, loginController, forgetPassword, resetPas
 var router = express.Router();
 const {userAuthorization} = require('../../middlewares/authorization.middlewares/authorization.middlewares');
 const checkRevoked = require('../../middlewares/authorization.middlewares/checkRevoked');
+const registerValidation = require('../../controllers/user/userValidatons/registerValidation');
+const validate = require("../../middlewares/validation.middleware");
+
 router.post("/verify-otp", userAuthorization, verifyOtp);
-router.post("/", registerController);
+router.post("/", validate(registerValidation),registerController);
 router.post("/login", loginController);
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password",userAuthorization, resetPassword);
