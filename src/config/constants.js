@@ -17,5 +17,7 @@ module.exports = {
   pagination: {
     limit: 50,
     page: 1
-  }
+  },
+  NOTE_CATEGORIES: ["personal", "work", "meeting", "idea"],
+
 };
